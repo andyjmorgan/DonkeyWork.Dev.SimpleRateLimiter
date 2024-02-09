@@ -1,10 +1,9 @@
 using DonkeyWork.Dev.SimpleRateLimiter.Sample.Interface;
 using DonkeyWork.Dev.SimpleRateLimiter.Sample.Service;
-using DonkeyWork.Dev.SimpleRateLimiter.Sample.Worker;
 using Polly;
 using Polly.Extensions.Http;
 
-namespace RateLimitTesterWorker
+namespace DonkeyWork.Dev.SimpleRateLimiter.Example.DependencyInjection
 {
     public class Program
     {
@@ -28,7 +27,7 @@ namespace RateLimitTesterWorker
                         options.BaseAddress = new Uri("https://jsonplaceholder.typicode.com");
                     })
                     .AddHttpMessageHandler(() =>
-                        new DonkeyWork.Dev.SimpleRateLimiter.SimpleRateLimitHandler(
+                        new SimpleRateLimitHandler(
                             requestsPerSecond: 10))
                     .SetHandlerLifetime(Timeout.InfiniteTimeSpan)
                     .AddPolicyHandler(GetRetryPolicy());

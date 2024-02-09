@@ -1,6 +1,6 @@
 using DonkeyWork.Dev.SimpleRateLimiter.Sample.Interface;
 
-namespace DonkeyWork.Dev.SimpleRateLimiter.Sample.Worker
+namespace DonkeyWork.Dev.SimpleRateLimiter.Example.DependencyInjection
 {
     public class Worker : BackgroundService
     {

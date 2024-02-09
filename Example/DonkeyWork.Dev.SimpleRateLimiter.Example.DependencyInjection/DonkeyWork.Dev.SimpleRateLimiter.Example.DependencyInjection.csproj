@@ -15,6 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Src\DonkeyWork.Dev.SimpleRateLimiter.csproj" />
+    <ProjectReference Include="..\..\Src\DonkeyWork.Dev.SimpleRateLimiter.csproj" />
   </ItemGroup>
 </Project>

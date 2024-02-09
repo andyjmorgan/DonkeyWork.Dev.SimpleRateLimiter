@@ -5,7 +5,7 @@ using Moq;
 
 namespace DonkeyWork.Dev.SimpleRateLimiter.Tests
 {
-    public class SampleTests
+    public class DependencyInjectionExampleTests
     {
         private const string MockConfigurationHttpClientName = "DonkeyWork";
         private const int MockConfigurationDegreesOfParallelism = 2;

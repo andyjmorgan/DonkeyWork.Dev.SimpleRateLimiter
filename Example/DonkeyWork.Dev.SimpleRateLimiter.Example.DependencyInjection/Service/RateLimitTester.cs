@@ -42,7 +42,9 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Sample.Service
             {
                 requestCount++;
                 HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, "/todos/1");
-                var response = await httpClient.SendAsync(requestMessage, cancellationToken);
+                var response = await httpClient
+                .SendAsync(requestMessage, cancellationToken)
+                .ConfigureAwait(false);
             });
 
             stopWatch.Stop();

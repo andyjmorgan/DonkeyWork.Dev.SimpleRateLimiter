@@ -33,7 +33,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Example\DonkeyWork.Dev.SimpleRateLimiter.Sample.csproj" />
+    <ProjectReference Include="..\..\Example\DonkeyWork.Dev.SimpleRateLimiter.Example.Classic\DonkeyWork.Dev.SimpleRateLimiter.Example.Classic.csproj" />
+    <ProjectReference Include="..\..\Example\DonkeyWork.Dev.SimpleRateLimiter.Example.DependencyInjection\DonkeyWork.Dev.SimpleRateLimiter.Example.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\Src\DonkeyWork.Dev.SimpleRateLimiter.csproj" />
   </ItemGroup>
 
