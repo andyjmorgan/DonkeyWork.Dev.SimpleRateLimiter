@@ -6,7 +6,6 @@ A simple httpclient middleware for rate limiting. This library supports dependen
 
 To use in a console application: (with a per second limit of 10):
 ```
-new SimpleRateLimitHandler(requestsPerSecond: Convert.ToInt32(Properties.Resources.RateLimit))
 new HttpClient(new SimpleRateLimitHandler(requestsPerSecond: 10))
 {
     BaseAddress = new Uri(Properties.Resources.BaseAddress)
