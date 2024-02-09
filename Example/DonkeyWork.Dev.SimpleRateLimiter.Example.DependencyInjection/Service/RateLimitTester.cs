@@ -46,13 +46,13 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Sample.Service
             {
                 requestCount++;
                 using HttpRequestMessage requestMessage = new (HttpMethod.Get, endpointAddress);
-                var response = await httpClient
+                await httpClient
                 .SendAsync(requestMessage, cancellationToken)
                 .ConfigureAwait(false);
             });
 
             stopWatch.Stop();
-            _logger.LogInformation($"Sent {requestCount} requests in {stopWatch.Elapsed.TotalMilliseconds}");
+            _logger.LogInformation("Sent {requestCount} requests in {timeTakenMs}", requestCount, stopWatch.ElapsedMilliseconds);
         }
     }
 }

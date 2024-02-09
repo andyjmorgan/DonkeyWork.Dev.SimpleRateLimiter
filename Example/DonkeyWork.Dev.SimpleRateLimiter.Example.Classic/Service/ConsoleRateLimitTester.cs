@@ -34,8 +34,7 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Example.Classic.Service
             await Parallel.ForEachAsync(Enumerable.Range(0, requestCount).ToList(), options, async (url, token) =>
             {
                 HttpRequestMessage requestMessage = new(HttpMethod.Get, Properties.Resources.EndpointAddress);
-                var response = await this.httpClient.SendAsync(requestMessage, cancellationToken);
-                Console.WriteLine(response.StatusCode);
+                await this.httpClient.SendAsync(requestMessage, cancellationToken);
             });
 
             stopWatch.Stop();
