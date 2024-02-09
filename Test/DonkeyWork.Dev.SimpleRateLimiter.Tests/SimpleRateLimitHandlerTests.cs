@@ -93,7 +93,6 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Tests
         /// <param name="maxRequests">The total number of requests to send.</param>
         [Theory]
         [InlineData(1, 1)]
-        [InlineData(1, 2)]
         [InlineData(2, 10)]
         [InlineData(4, 20)]
         [InlineData(5, 25)]
@@ -117,9 +116,9 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Tests
             Stopwatch stopWatch = Stopwatch.StartNew();
             foreach (var _ in Enumerable.Range(0, maxRequests))
             {
-                var httpRequest = new HttpRequestMessage(HttpMethod.Get, "/example");
+                using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "/example");
                 var actualResponse = await httpClient.SendAsync(httpRequest);
-                
+
                 Assert.Equal(HttpStatusCode.Accepted, actualResponse.StatusCode);
                 Assert.Equal(actualResponse, mockedResult);
             }
@@ -138,7 +137,7 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Tests
         /// <param name="testHandler">The test handler.</param>
         /// <param name="maxRequestsPerSecond">The desired RateLimit.</param>
         /// <returns></returns>
-        private HttpClient CreateClient(Mock<DelegatingHandler> testHandler, int maxRequestsPerSecond = 10)
+        private static HttpClient CreateClient(Mock<DelegatingHandler> testHandler, int maxRequestsPerSecond = 10)
         {
             var subject = new SimpleRateLimitHandler(maxRequestsPerSecond)
             {

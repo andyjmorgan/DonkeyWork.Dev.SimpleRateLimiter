@@ -9,10 +9,10 @@ namespace DonkeyWork.Dev.SimpleRateLimiter
     public class SimpleRateLimitHandler : DelegatingHandler, IDisposable
     {
         // a blocking collection to store the recent calls.
-        ConcurrentQueue<DateTime> recentCallQueue = new ConcurrentQueue<DateTime>();
+        private readonly ConcurrentQueue<DateTime> recentCallQueue = new ();
 
         // a semaphore to control multithreaded access to the rate limiter.
-        SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1);
+        private readonly SemaphoreSlim _semaphoreSlim = new (1);
 
         // The desired period to rate limit.
         private readonly TimeSpan _rateLimitPeriod;
@@ -71,8 +71,7 @@ namespace DonkeyWork.Dev.SimpleRateLimiter
         /// </summary>
         private void DequeueExpiredEntries()
         {
-            DateTime lastEntry;
-            while (this.recentCallQueue.TryPeek(out lastEntry))
+            while (this.recentCallQueue.TryPeek(out DateTime lastEntry))
             {
                 var last = DateTime.UtcNow.Subtract(_rateLimitPeriod);
                 if (lastEntry >= last)
