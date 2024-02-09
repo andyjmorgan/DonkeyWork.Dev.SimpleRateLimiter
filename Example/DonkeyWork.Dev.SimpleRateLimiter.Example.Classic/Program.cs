@@ -4,9 +4,9 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Example.Classic
 {
     internal class Program
     {
-        static async Task Main(string[] args)
+        static async Task Main()
         {
-            ConsoleRateLimitTester consoleRateLimitTester  = new ConsoleRateLimitTester();
+            ConsoleRateLimitTester consoleRateLimitTester  = new ();
             await consoleRateLimitTester.PerformRequestsAsync(new CancellationToken());
         }
     }

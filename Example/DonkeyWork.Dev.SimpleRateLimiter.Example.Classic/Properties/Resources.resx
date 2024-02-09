@@ -118,15 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BaseAddress" xml:space="preserve">
-    <value>https://jsonplaceholder.typicode.com</value>
+    <value>http://localhost:32768</value>
+  </data>
+  <data name="EndpointAddress" xml:space="preserve">
+    <value>/api/ratelimit/fixed</value>
   </data>
   <data name="MaxDegreeOfParallelism" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="RateLimit" xml:space="preserve">
-    <value>20</value>
+    <value>10</value>
   </data>
   <data name="TotalQueries" xml:space="preserve">
-    <value>100</value>
+    <value>18000</value>
   </data>
 </root>

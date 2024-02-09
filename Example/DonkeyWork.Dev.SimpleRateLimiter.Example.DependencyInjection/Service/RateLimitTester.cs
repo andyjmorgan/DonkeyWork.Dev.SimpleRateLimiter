@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace DonkeyWork.Dev.SimpleRateLimiter.Sample.Service
 {
     /// <summary>
-    /// A simple implementation of a the RateLimterTester Interface.
+    /// A simple implementation of the <see cref="IRateLimitTester"/> Interface.
     /// </summary>
     public class RateLimitTester : IRateLimitTester
     {
@@ -30,10 +30,14 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Sample.Service
             {
                 MaxDegreeOfParallelism = _configuration.GetValue("MaxDegreeOfParallelism", 2)
             };
+
             var totalQueries = _configuration.GetValue("TotalQueries", 100);
-            
+
+            var endpointAddress = _configuration.GetValue<string>("EndpointAddress");
+
             Ensure.That(options.MaxDegreeOfParallelism, nameof(options.MaxDegreeOfParallelism)).IsGt(0);
             Ensure.That(totalQueries, nameof(totalQueries)).IsGt(0);
+            Ensure.That(endpointAddress, nameof(endpointAddress)).IsNotNullOrEmpty();
 
             int requestCount = 0;
             var stopWatch = Stopwatch.StartNew();
@@ -41,7 +45,7 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Sample.Service
             await Parallel.ForEachAsync(Enumerable.Range(0, totalQueries).ToList(), options, async (url, token) =>
             {
                 requestCount++;
-                HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, "/todos/1");
+                using HttpRequestMessage requestMessage = new (HttpMethod.Get, endpointAddress);
                 var response = await httpClient
                 .SendAsync(requestMessage, cancellationToken)
                 .ConfigureAwait(false);

@@ -2,6 +2,7 @@ using DonkeyWork.Dev.SimpleRateLimiter.Sample.Interface;
 using DonkeyWork.Dev.SimpleRateLimiter.Sample.Service;
 using Polly;
 using Polly.Extensions.Http;
+using System.Diagnostics;
 
 namespace DonkeyWork.Dev.SimpleRateLimiter.Example.DependencyInjection
 {
@@ -12,8 +13,12 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Example.DependencyInjection
             return HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
-                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
-                                                                            retryAttempt)));
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .WaitAndRetryAsync(100, retryAttempt => TimeSpan.FromMilliseconds(10 * retryAttempt),
+                                                                            onRetry: (outcome, timeSpan, retryAttempt, context) =>
+                                                                            {
+                                                                                Debug.WriteLine($"{outcome?.Result?.StatusCode} - {outcome?.Result?.Content.ReadAsStringAsync().GetAwaiter().GetResult()} - {timeSpan} - {retryAttempt}");
+                                                                            });
         }
         public static void Main(string[] args)
         {
@@ -24,13 +29,14 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Example.DependencyInjection
                         builderContext.Configuration.GetValue<string>("HttpClientName", "DonkeyWork")!)
                     .ConfigureHttpClient(options =>
                     {
-                        options.BaseAddress = new Uri("https://jsonplaceholder.typicode.com");
+                        options.BaseAddress = new Uri(builderContext.Configuration.GetValue<string>("BaseAddress")!);
                     })
+                    
+                    .SetHandlerLifetime(Timeout.InfiniteTimeSpan)
+                    .AddPolicyHandler(GetRetryPolicy())
                     .AddHttpMessageHandler(() =>
                         new SimpleRateLimitHandler(
-                            requestsPerSecond: 10))
-                    .SetHandlerLifetime(Timeout.InfiniteTimeSpan)
-                    .AddPolicyHandler(GetRetryPolicy());
+                            requestsPerSecond: 2));
                     services.AddHostedService<Worker>();
                     services.AddTransient<IRateLimitTester, RateLimitTester>();
                 })

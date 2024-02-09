@@ -24,7 +24,7 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Tests
             // Act + Assert
             await handler.PerformRequestsAsync(new CancellationToken());
             mockIHttpClientFactory.Verify(x => x.CreateClient(It.Is<string>(x => x == MockConfigurationHttpClientName)), times: Times.Once);
-            mockIConfiguration.Verify(x => x.GetSection(It.IsAny<string>()), times: Times.Exactly(3));
+            mockIConfiguration.Verify(x => x.GetSection(It.IsAny<string>()), times: Times.Exactly(4));
             mockHttpClient.Verify(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()), Times.Exactly(MockConfigurationTotalQueries));
             Mock.VerifyAll();
         }
@@ -66,7 +66,8 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Tests
             {
                 { "HttpClientName", MockConfigurationHttpClientName },
                 { "MaxDegreeOfParallelism", MockConfigurationDegreesOfParallelism.ToString() },
-                { "TotalQueries",  0.ToString() }
+                { "TotalQueries",  0.ToString() },
+                { "EndpointAddress", "/api/example" }
             };
 
             var (handler, mockILogger, mockIConfiguration, mockIHttpClientFactory, mockHttpClient) =
@@ -75,7 +76,33 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Tests
             // Act + Assert
             await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await handler.PerformRequestsAsync(new CancellationToken()));
             mockIHttpClientFactory.Verify(x => x.CreateClient(It.Is<string>(x => x == MockConfigurationHttpClientName)), times:  Times.Once);
-            mockIConfiguration.Verify(x => x.GetSection(It.IsAny<string>()), times: Times.Exactly(3));
+            mockIConfiguration.Verify(x => x.GetSection(It.IsAny<string>()), times: Times.Exactly(4));
+            mockHttpClient.Verify(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        /// <summary>
+        /// Configures the Endpoint Address with an invalid value and ensures it throws an <see cref="ArgumentOutOfRangeException"/>.
+        /// </summary>
+        /// <returns>The Task.</returns>
+        [Fact]
+        public async Task PerformRequests_WithInvalidEndpointAddress_ThrowsArgumentOutOfRangeException()
+        {
+            // Arrange
+            var configurationDictionary = new Dictionary<string, string>
+            {
+                { "HttpClientName", MockConfigurationHttpClientName },
+                { "MaxDegreeOfParallelism", MockConfigurationDegreesOfParallelism.ToString() },
+                { "TotalQueries",  0.ToString() },
+                { "EndpointAddress", "" }
+            };
+
+            var (handler, mockILogger, mockIConfiguration, mockIHttpClientFactory, mockHttpClient) =
+                GetHandler(mockIConfiguration: GetConfigurationMock(configurationDictionary));
+
+            // Act + Assert
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await handler.PerformRequestsAsync(new CancellationToken()));
+            mockIHttpClientFactory.Verify(x => x.CreateClient(It.Is<string>(x => x == MockConfigurationHttpClientName)), times: Times.Once);
+            mockIConfiguration.Verify(x => x.GetSection(It.IsAny<string>()), times: Times.Exactly(4));
             mockHttpClient.Verify(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
@@ -98,7 +125,7 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Tests
             // Act + Assert
             await Assert.ThrowsAsync<HttpRequestException>(async () => await mockingSetup.handler.PerformRequestsAsync(new CancellationToken()));
             mockingSetup.mockIHttpClientFactory.Verify(x => x.CreateClient(It.Is<string>(x => x == MockConfigurationHttpClientName)), times: Times.Once);
-            mockingSetup.mockIConfiguration.Verify(x => x.GetSection(It.IsAny<string>()), times: Times.Exactly(3));
+            mockingSetup.mockIConfiguration.Verify(x => x.GetSection(It.IsAny<string>()), times: Times.Exactly(4));
             mockingSetup.mockHttpClient.Verify(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()), Times.AtLeastOnce);
         }
 
@@ -139,7 +166,8 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Tests
             {
                 { "HttpClientName", MockConfigurationHttpClientName },
                 { "MaxDegreeOfParallelism", MockConfigurationDegreesOfParallelism.ToString() },
-                { "TotalQueries",  MockConfigurationTotalQueries.ToString() }
+                { "TotalQueries",  MockConfigurationTotalQueries.ToString() },
+                { "EndpointAddress", "/api/example" }
             };
             }
             var configurationMock = new Mock<IConfiguration>();

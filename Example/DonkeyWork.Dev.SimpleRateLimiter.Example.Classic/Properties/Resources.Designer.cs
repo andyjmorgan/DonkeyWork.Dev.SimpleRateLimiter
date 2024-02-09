@@ -61,7 +61,7 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Example.Classic.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://jsonplaceholder.typicode.com.
+        ///   Looks up a localized string similar to http://localhost:32768.
         /// </summary>
         internal static string BaseAddress {
             get {
@@ -70,7 +70,16 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Example.Classic.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 2.
+        ///   Looks up a localized string similar to /api/ratelimit/fixed.
+        /// </summary>
+        internal static string EndpointAddress {
+            get {
+                return ResourceManager.GetString("EndpointAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 4.
         /// </summary>
         internal static string MaxDegreeOfParallelism {
             get {
@@ -79,7 +88,7 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Example.Classic.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 20.
+        ///   Looks up a localized string similar to 10.
         /// </summary>
         internal static string RateLimit {
             get {
@@ -88,7 +97,7 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Example.Classic.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 100.
+        ///   Looks up a localized string similar to 18000.
         /// </summary>
         internal static string TotalQueries {
             get {

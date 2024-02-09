@@ -33,8 +33,9 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Example.Classic.Service
 
             await Parallel.ForEachAsync(Enumerable.Range(0, requestCount).ToList(), options, async (url, token) =>
             {
-                HttpRequestMessage requestMessage = new(HttpMethod.Get, "/todos/1");
+                HttpRequestMessage requestMessage = new(HttpMethod.Get, Properties.Resources.EndpointAddress);
                 var response = await this.httpClient.SendAsync(requestMessage, cancellationToken);
+                Console.WriteLine(response.StatusCode);
             });
 
             stopWatch.Stop();
@@ -45,10 +46,16 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Example.Classic.Service
         private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
         {
             return HttpPolicyExtensions
-                .HandleTransientHttpError()
-                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
-                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
-                                                                            retryAttempt)));
+              .HandleTransientHttpError()
+              .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InsufficientStorage)
+              .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+              .WaitAndRetryAsync(100, retryAttempt => TimeSpan.FromMilliseconds(10 *
+                                retryAttempt),
+                                onRetry: (outcome, timeSpan, retryAttempt, context) =>
+                                {
+                                    Debug.WriteLine(
+                                        $"{outcome?.Result?.StatusCode} - {outcome?.Result?.Content.ReadAsStringAsync().GetAwaiter().GetResult()} - {timeSpan} - {retryAttempt}");
+                                });
         }
 
         private static PolicyHttpMessageHandler GetPolicyHttpMessageHandler()
@@ -56,7 +63,7 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Example.Classic.Service
             var retryHandler = GetRetryPolicy();
             PolicyHttpMessageHandler policyHttpMessageHandler = new(retryHandler)
             {
-                InnerHandler = new HttpClientHandler()
+                InnerHandler = GetSimpleRateLimitHandler()
             };
             return policyHttpMessageHandler;
         }
@@ -65,14 +72,14 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Example.Classic.Service
         {
             var rateLimitHandler = new SimpleRateLimitHandler(requestsPerSecond: Convert.ToInt32(Properties.Resources.RateLimit))
             {
-                InnerHandler = GetPolicyHttpMessageHandler()
+                InnerHandler = new HttpClientHandler()
             };
             return rateLimitHandler;
         }
 
         private static HttpClient GetHttpClient()
         {
-            return new HttpClient(GetSimpleRateLimitHandler())
+            return new HttpClient(GetPolicyHttpMessageHandler())
             {
                 BaseAddress = new Uri(Properties.Resources.BaseAddress)
             };
