@@ -48,8 +48,7 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Example.Classic.Service
               .HandleTransientHttpError()
               .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.InsufficientStorage)
               .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-              .WaitAndRetryAsync(100, retryAttempt => TimeSpan.FromMilliseconds(10 *
-                                retryAttempt),
+              .WaitAndRetryAsync(100, retryAttempt => TimeSpan.FromMilliseconds(50),
                                 onRetry: (outcome, timeSpan, retryAttempt, context) =>
                                 {
                                     Debug.WriteLine(

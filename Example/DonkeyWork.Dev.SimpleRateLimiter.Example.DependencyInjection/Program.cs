@@ -14,7 +14,7 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Example.DependencyInjection
                 .HandleTransientHttpError()
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-                .WaitAndRetryAsync(100, retryAttempt => TimeSpan.FromMilliseconds(10 * retryAttempt),
+                .WaitAndRetryAsync(100, retryAttempt => TimeSpan.FromMilliseconds(50),
                                                                             onRetry: (outcome, timeSpan, retryAttempt, context) =>
                                                                             {
                                                                                 Debug.WriteLine($"{outcome?.Result?.StatusCode} - {outcome?.Result?.Content.ReadAsStringAsync().GetAwaiter().GetResult()} - {timeSpan} - {retryAttempt}");
