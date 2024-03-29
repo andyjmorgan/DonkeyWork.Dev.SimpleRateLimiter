@@ -17,7 +17,7 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Tests
             var testHandler = new Mock<DelegatingHandler>();
 
             // Act + Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => CreateClient(testHandler, 0));
+            Assert.Throws<ArgumentException>(() => CreateClient(testHandler, 0));
         }
         /// <summary>
         /// Create a <see cref="HttpClient"/> with our middleware and ensure the message is not impeded in any way.

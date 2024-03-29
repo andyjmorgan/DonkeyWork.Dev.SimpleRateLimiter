@@ -74,7 +74,7 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Tests
                 GetHandler(mockIConfiguration: GetConfigurationMock(configurationDictionary));
 
             // Act + Assert
-            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await handler.PerformRequestsAsync(new CancellationToken()));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await handler.PerformRequestsAsync(new CancellationToken()));
             mockIHttpClientFactory.Verify(x => x.CreateClient(It.Is<string>(x => x == MockConfigurationHttpClientName)), times:  Times.Once);
             mockIConfiguration.Verify(x => x.GetSection(It.IsAny<string>()), times: Times.Exactly(4));
             mockHttpClient.Verify(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -100,7 +100,7 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Tests
                 GetHandler(mockIConfiguration: GetConfigurationMock(configurationDictionary));
 
             // Act + Assert
-            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await handler.PerformRequestsAsync(new CancellationToken()));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await handler.PerformRequestsAsync(new CancellationToken()));
             mockIHttpClientFactory.Verify(x => x.CreateClient(It.Is<string>(x => x == MockConfigurationHttpClientName)), times: Times.Once);
             mockIConfiguration.Verify(x => x.GetSection(It.IsAny<string>()), times: Times.Exactly(4));
             mockHttpClient.Verify(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()), Times.Never);
