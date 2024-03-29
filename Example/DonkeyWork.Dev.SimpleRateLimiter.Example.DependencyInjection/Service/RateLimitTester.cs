@@ -1,5 +1,4 @@
 ﻿using DonkeyWork.Dev.SimpleRateLimiter.Sample.Interface;
-using EnsureThat;
 using System.Diagnostics;
 
 namespace DonkeyWork.Dev.SimpleRateLimiter.Sample.Service
@@ -35,11 +34,18 @@ namespace DonkeyWork.Dev.SimpleRateLimiter.Sample.Service
 
             var endpointAddress = _configuration.GetValue<string>("EndpointAddress");
 
-            Ensure.That(options.MaxDegreeOfParallelism, nameof(options.MaxDegreeOfParallelism)).IsGt(0);
-            Ensure.That(totalQueries, nameof(totalQueries)).IsGt(0);
-            Ensure.That(endpointAddress, nameof(endpointAddress)).IsNotNullOrEmpty();
+            ArgumentException.ThrowIfNullOrWhiteSpace(endpointAddress);
+            if (options.MaxDegreeOfParallelism <= 0)
+            {
+                throw new ArgumentException("Max Degree of Parallelism must be greater than zero");
+            }
 
-            int requestCount = 0;
+            if (totalQueries <= 0)
+            {
+                throw new ArgumentException("Total Queries must be greater than zero");
+            }
+            
+            var requestCount = 0;
             var stopWatch = Stopwatch.StartNew();
 
             await Parallel.ForEachAsync(Enumerable.Range(0, totalQueries).ToList(), options, async (url, token) =>

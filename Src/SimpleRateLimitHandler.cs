@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using EnsureThat;
 
 namespace DonkeyWork.Dev.SimpleRateLimiter
 {
@@ -23,10 +22,13 @@ namespace DonkeyWork.Dev.SimpleRateLimiter
         /// <summary>
         /// Default constructor for the RateLimit handler.
         /// </summary>
-        /// <param name="_requestsPerSecond">The maximum amount of requests throughout the period. (minimum 1).</param>
+        /// <param name="requestsPerSecond">The maximum amount of requests throughout the period. (minimum 1).</param>
         public SimpleRateLimitHandler(int requestsPerSecond)
         {
-            Ensure.That(requestsPerSecond).IsGt(0);
+            if (requestsPerSecond <= 0)
+            {
+                throw new ArgumentException("requests Per Second must be greater than zero");
+            }
             _requestsPerSecond = requestsPerSecond;
             _rateLimitPeriod = TimeSpan.FromSeconds(1);
         }
